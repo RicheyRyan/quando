@@ -1,0 +1,19 @@
+{
+  "name": "cuando",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RicheyRyan/cuando.git"
+  },
+  "author": "Richey Ryan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RicheyRyan/cuando/issues"
+  },
+  "homepage": "https://github.com/RicheyRyan/cuando#readme"
+}
