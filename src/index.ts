@@ -1,5 +1,5 @@
 type QuandoResult<R> = R | undefined;
-type QuandoParam<R> = R | (() => R) | undefined;
+type QuandoParam<R> = (() => R) | QuandoResult<R>;
 class Controller<R> {
   defaultCondition: Boolean;
   condition: Boolean;
