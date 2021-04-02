@@ -1,15 +1,5 @@
 type QuandoResult<R> = R | undefined;
 type QuandoParam<R> = R | (() => R) | undefined;
-
-interface QuandoConditonal<R> {
-  result: QuandoResult<R>;
-  condition: Boolean;
-  end: (result: R) => QuandoResult<R>;
-}
-interface WhenConditonal<R> extends QuandoConditonal<R> {
-  elseWhen: (condition: Boolean, result: R) => QuandoConditonal<R>;
-}
-
 class Controller<R> {
   defaultCondition: Boolean;
   condition: Boolean;
