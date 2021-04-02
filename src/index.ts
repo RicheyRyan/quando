@@ -1,5 +1,14 @@
 type QuandoResult<R> = R | undefined;
 type QuandoParam<R> = (() => R) | QuandoResult<R>;
+
+function extractResult<T>(result: QuandoParam<T>) {
+  if (result instanceof Function) {
+    return result();
+  } else {
+    return result;
+  }
+}
+
 class Controller<R> {
   defaultCondition: Boolean;
   condition: Boolean;
@@ -17,18 +26,11 @@ class Controller<R> {
     if (this.condition === this.defaultCondition) {
       return this.result;
     }
-    return this.extractResult(defaultValue);
+    return extractResult<R>(defaultValue);
   }
   updateResult(condition: Boolean, result: QuandoParam<R>) {
     this.condition = condition;
-    this.result = this.extractResult(result);
-  }
-  extractResult(result: QuandoParam<R>) {
-    if (result instanceof Function) {
-      return result();
-    } else {
-      return result;
-    }
+    this.result = extractResult<R>(result);
   }
 }
 
@@ -64,4 +66,35 @@ class UnlessCondition<R> {
 
 export function Unless<R>(condition: Boolean, result: QuandoParam<R>) {
   return new UnlessCondition<R>(new Controller<R>(false, condition, result));
+}
+
+class MatchCondition<M, R> {
+  matchable: M;
+  result: R | undefined;
+  constructor(matchable: M) {
+    this.matchable = matchable;
+    this.result = undefined;
+  }
+  where(clause: M | ((arg: M) => Boolean), result: (() => R) | R | undefined) {
+    if (clause instanceof Function) {
+      if (clause(this.matchable)) {
+        this.result = extractResult<R>(result);
+      }
+    } else {
+      if (this.matchable === clause) {
+        this.result = extractResult<R>(result);
+      }
+    }
+    return this;
+  }
+  end(defaultValue?: (() => R) | R | undefined) {
+    if (this.result) {
+      return this.result;
+    }
+    return extractResult<R>(defaultValue);
+  }
+}
+
+export function Match<M, R>(matchable: M) {
+  return new MatchCondition<M, R>(matchable);
 }

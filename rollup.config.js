@@ -15,7 +15,7 @@ export default [
     plugins: [
       resolve(), // so Rollup can find `ms`
       commonjs(), // so Rollup can convert `ms` to an ES module
-      typescript(), // so Rollup can convert TypeScript to JavaScript
+      typescript({ module: "esnext" }), // so Rollup can convert TypeScript to JavaScript
     ],
   },
 
@@ -29,7 +29,7 @@ export default [
     input: "src/index.ts",
     external: ["ms"],
     plugins: [
-      typescript(), // so Rollup can convert TypeScript to JavaScript
+      typescript({ module: "esnext" }), // so Rollup can convert TypeScript to JavaScript
     ],
     output: [
       { file: pkg.main, format: "cjs" },
