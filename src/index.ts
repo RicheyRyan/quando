@@ -13,11 +13,16 @@ class Controller<R> {
     this.condition = defaultCondition;
     this.updateResult(Boolean(condition), result);
   }
+  end(defaultValue?: QuandoParam<R>) {
+    if (this.condition === this.defaultCondition) {
+      return this.result;
+    }
+    return this.extractResult(defaultValue);
+  }
   updateResult(condition: Boolean, result: QuandoParam<R>) {
     this.condition = condition;
     this.result = this.extractResult(result);
   }
-
   extractResult(result: QuandoParam<R>) {
     if (result instanceof Function) {
       return result();
@@ -38,10 +43,7 @@ class WhenCondition<R> {
     return this;
   }
   end(defaultValue?: QuandoParam<R>) {
-    if (this.controller.condition) {
-      return this.controller.result;
-    }
-    return this.controller.extractResult(defaultValue);
+    return this.controller.end(defaultValue);
   }
 }
 
@@ -56,10 +58,7 @@ class UnlessCondition<R> {
     this.controller = controller;
   }
   end(defaultValue?: QuandoParam<R>) {
-    if (this.controller.condition === false) {
-      return this.controller.result;
-    }
-    return this.controller.extractResult(defaultValue);
+    return this.controller.end(defaultValue);
   }
 }
 
