@@ -1,19 +1,40 @@
 {
-  "name": "cuando",
+  "name": "quando",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "dist/quando.js",
+  "module": "dist/quando.esm.js",
+  "browser": "dist/quando.umd.js",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "@rollup/plugin-typescript": "^8.2.1",
+    "@types/tap": "^14.10.3",
+    "rollup": "^2.44.0",
+    "tap": "^15.0.1",
+    "ts-node": "^9.1.1",
+    "tslib": "^2.1.0",
+    "typescript": "^4.2.3"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "tap --node-arg=--require=ts-node/register"
+  },
+  "files": [
+    "dist"
+  ],
+  "tap": {
+    "ts": true
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RicheyRyan/cuando.git"
+    "url": "git+https://github.com/RicheyRyan/quando.git"
   },
   "author": "Richey Ryan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/RicheyRyan/cuando/issues"
+    "url": "https://github.com/RicheyRyan/quando/issues"
   },
-  "homepage": "https://github.com/RicheyRyan/cuando#readme"
+  "homepage": "https://github.com/RicheyRyan/quando#readme"
 }

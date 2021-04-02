@@ -1,0 +1,12 @@
+{
+  "include": ["src"],
+  "exclude": ["dist", "node_modules"],
+  "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "./src"],
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  }
+}
