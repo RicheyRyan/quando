@@ -1,5 +1,8 @@
 # Quando
 
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/quando?style=flat-square)
+![GitHub](https://img.shields.io/github/license/richeyryan/quando?style=flat-square)
+
 🎵 _Tell me when will you be mine? / Tell me quando quando quando_ 🎵
 
 ## Install
