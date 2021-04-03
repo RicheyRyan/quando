@@ -16,7 +16,7 @@ class Controller<R> {
   constructor(
     defaultCondition: Boolean,
     condition: Boolean,
-    result: QuandoParam<R>
+    result: QuandoParam<R>,
   ) {
     this.defaultCondition = defaultCondition;
     this.condition = defaultCondition;
