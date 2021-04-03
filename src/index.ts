@@ -76,6 +76,7 @@ class MatchCondition<M, R> {
     this.result = undefined;
   }
   where(clause: M | ((arg: M) => Boolean), result: (() => R) | R | undefined) {
+    if (this.result) return this;
     if (clause instanceof Function) {
       if (clause(this.matchable)) {
         this.result = extractResult<R>(result);
