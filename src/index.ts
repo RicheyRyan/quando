@@ -40,7 +40,7 @@ class WhenCondition<R> {
   constructor(controller: Controller<R>) {
     this.controller = controller;
   }
-  elseWhen(condition: Boolean, result: QuandoParam<R>) {
+  where(condition: Boolean, result: QuandoParam<R>) {
     this.controller.updateResult(condition, result);
     return this;
   }

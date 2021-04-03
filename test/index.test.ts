@@ -14,15 +14,15 @@ describe("Quando", () => {
       expect(When<number>(false, 1).end(0)).toBe(0);
       expect(When<number>(false, 1).end(() => 0)).toBe(0);
     });
-    it("returns the elseWhen conditon when the initial condition is false", () => {
+    it("returns the where conditon when the initial condition is false", () => {
       expect(
         When<number>(false, 1)
-          .elseWhen(true, 99)
+          .where(true, 99)
           .end(0),
       ).toBe(99);
       expect(
         When<number>(false, 1)
-          .elseWhen(true, () => 99)
+          .where(true, () => 99)
           .end(0),
       ).toBe(99);
     });
@@ -30,12 +30,12 @@ describe("Quando", () => {
     it("returns the default when the initial condition is false and there is an else condition but it is also false", () => {
       expect(
         When<number>(false, 1)
-          .elseWhen(false, 99)
+          .where(false, 99)
           .end(0),
       ).toBe(0);
       expect(
         When<number>(false, 1)
-          .elseWhen(false, 99)
+          .where(false, 99)
           .end(() => 0),
       ).toBe(0);
     });
@@ -43,7 +43,7 @@ describe("Quando", () => {
     it("returns undefined when the initial condition is false and there is an else condition but it is also false and the default is not supplied", () => {
       expect(
         When<number>(false, 1)
-          .elseWhen(false, 99)
+          .where(false, 99)
           .end(),
       ).toBeUndefined();
     });

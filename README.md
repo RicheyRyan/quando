@@ -24,7 +24,7 @@ Some proposals would bring more powerful conditional expressions to JavaScript l
 
 Here's an example that handles the status of an API call using the `Match` function:
 
-```ts
+```js
 function Example() {
   const { status, error, data } = useQuery("repoData", () =>
     fetch("https://api.github.com/repos/richeyryan/quando").then(res =>
@@ -73,8 +73,8 @@ The equivalent of an if statement.
 import { When } from "quando";
 
 When(status === "loading", <Loading />)
-  .elseWhen(status === "error", <Error message="Failed to load user" />)
-  .elseWhen(status === "success", <User user={user} />)
+  .where(status === "error", <Error message="Failed to load user" />)
+  .where(status === "success", <User user={user} />)
   .end();
 ```
 
