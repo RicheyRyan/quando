@@ -69,8 +69,8 @@ export function Unless<R>(condition: Boolean, result: QuandoParam<R>) {
 }
 
 class MatchCondition<M, R> {
-  matchable: M;
-  result: R | undefined;
+  private matchable: M;
+  private result: R | undefined;
   constructor(matchable: M) {
     this.matchable = matchable;
     this.result = undefined;
