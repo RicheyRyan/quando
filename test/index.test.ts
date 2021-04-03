@@ -135,5 +135,16 @@ describe("Quando", () => {
           .end(() => "Billy"),
       ).toBe("Billy");
     });
+    it("returns the earliest matching clause", () => {
+      expect(
+        Match<boolean, number>(true)
+          .where(false, 0)
+          .where(false, 1)
+          .where(true, 2)
+          .where(true, 3)
+          .where(false, 4)
+          .end(),
+      ).toBe(2);
+    });
   });
 });
