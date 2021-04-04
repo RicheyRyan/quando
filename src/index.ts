@@ -26,7 +26,7 @@ function compareBooleans<R>(
   return undefined;
 }
 
-class Matcher<M, R> {
+export class Matcher<M, R> {
   matchable: M;
   checkCondition: QuandoComparer<M, R>;
   result: QuandoResult<R>;
@@ -41,8 +41,10 @@ class Matcher<M, R> {
     return extractResult<R>(defaultValue);
   }
   updateResult(clause: QuandoMatches<M>, result: QuandoParam<R>) {
-    if (this.result) return;
-    this.result = this.checkCondition(this.matchable, clause, result);
+    if (!this.result) {
+      this.result = this.checkCondition(this.matchable, clause, result);
+    }
+    return this;
   }
 }
 
@@ -62,9 +64,12 @@ class WhenCondition<M, R> {
 }
 
 export function When<R>(condition: boolean, result?: QuandoParam<R>) {
-  const matcher = new Matcher<boolean, R>(compareBooleans, true);
-  matcher.updateResult(condition, result);
-  return new WhenCondition<boolean, R>(matcher);
+  return new WhenCondition<boolean, R>(
+    new Matcher<boolean, R>(compareBooleans, true).updateResult(
+      condition,
+      result,
+    ),
+  );
 }
 
 class UnlessCondition<M, R> {
@@ -79,9 +84,12 @@ class UnlessCondition<M, R> {
 }
 
 export function Unless<R>(condition: boolean, result: QuandoParam<R>) {
-  const matcher = new Matcher<boolean, R>(compareBooleans, false);
-  matcher.updateResult(condition, result);
-  return new UnlessCondition<boolean, R>(matcher);
+  return new UnlessCondition<boolean, R>(
+    new Matcher<boolean, R>(compareBooleans, false).updateResult(
+      condition,
+      result,
+    ),
+  );
 }
 
 function compareMatches<M, R>(
