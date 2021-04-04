@@ -47,11 +47,20 @@ describe("Quando", () => {
           .end(),
       ).toBeUndefined();
     });
+
+    it("returns the earliest matching clause", () => {
+      expect(
+        When<number>(true, 1)
+          .elseWhen(true, 2)
+          .elseWhen(false, 3)
+          .end(),
+      ).toBe(1);
+    });
   });
   describe("Unless", () => {
     it("returns the result when the initial condition is false", () => {
-      expect(Unless<number>(false, 1).end()).toBe(1);
-      expect(Unless<number>(false, () => 1).end()).toBe(1);
+      expect(Unless<number>(false, 1).end(2)).toBe(1);
+      expect(Unless<number>(false, () => 1).end(() => 2)).toBe(1);
     });
     it("returns the default when the initial condition is true", () => {
       expect(Unless<number>(true, 1).end(0)).toBe(0);
