@@ -1,8 +1,9 @@
 type QuandoResult<R> = R | undefined;
 type QuandoParam<R> = (() => R) | QuandoResult<R>;
+type QuandoMatches<M> = M | ((arg: M) => Boolean) | Boolean;
 type QuandoComparer<M, R> = (
   comparable: M,
-  condition: M,
+  clause: QuandoMatches<M>,
   result: QuandoParam<R>,
 ) => QuandoResult<R>;
 
@@ -15,29 +16,23 @@ function extractResult<T>(result: QuandoParam<T>) {
 }
 
 function compareBooleans<R>(
-  comparable: Boolean,
-  condition: Boolean,
+  comparable: boolean,
+  clause: QuandoMatches<boolean>,
   result: QuandoParam<R>,
 ) {
-  if (comparable === Boolean(condition)) {
+  if (comparable === Boolean(clause)) {
     return extractResult<R>(result);
   }
   return undefined;
 }
 
-class Controller<M, R> {
-  comparable: M;
+class Matcher<M, R> {
+  matchable: M;
   checkCondition: QuandoComparer<M, R>;
   result: QuandoResult<R>;
-  constructor(
-    comparable: M,
-    condition: M,
-    result: QuandoParam<R>,
-    checkCondition: QuandoComparer<M, R>,
-  ) {
-    this.comparable = comparable;
+  constructor(checkCondition: QuandoComparer<M, R>, matchable: M) {
+    this.matchable = matchable;
     this.checkCondition = checkCondition;
-    this.updateResult(condition, result);
   }
   end(defaultValue?: QuandoParam<R>) {
     if (this.result) {
@@ -45,78 +40,82 @@ class Controller<M, R> {
     }
     return extractResult<R>(defaultValue);
   }
-  updateResult(condition: M, result: QuandoParam<R>) {
+  updateResult(clause: QuandoMatches<M>, result: QuandoParam<R>) {
     if (this.result) return;
-    this.result = this.checkCondition(this.comparable, condition, result);
+    this.result = this.checkCondition(this.matchable, clause, result);
   }
 }
 
 class WhenCondition<M, R> {
-  private controller: Controller<M, R>;
+  private matcher: Matcher<M, R>;
 
-  constructor(controller: Controller<M, R>) {
-    this.controller = controller;
+  constructor(matcher: Matcher<M, R>) {
+    this.matcher = matcher;
   }
   elseWhen(condition: M, result: QuandoParam<R>) {
-    this.controller.updateResult(condition, result);
+    this.matcher.updateResult(condition, result);
     return this;
   }
   end(defaultValue?: QuandoParam<R>) {
-    return this.controller.end(defaultValue);
+    return this.matcher.end(defaultValue);
   }
 }
 
 export function When<R>(condition: boolean, result?: QuandoParam<R>) {
-  return new WhenCondition<boolean, R>(
-    new Controller<boolean, R>(true, condition, result, compareBooleans),
-  );
+  const matcher = new Matcher<boolean, R>(compareBooleans, true);
+  matcher.updateResult(condition, result);
+  return new WhenCondition<boolean, R>(matcher);
 }
 
 class UnlessCondition<M, R> {
-  private controller: Controller<M, R>;
+  private matcher: Matcher<M, R>;
 
-  constructor(controller: Controller<M, R>) {
-    this.controller = controller;
+  constructor(matcher: Matcher<M, R>) {
+    this.matcher = matcher;
   }
   end(defaultValue?: QuandoParam<R>) {
-    return this.controller.end(defaultValue);
+    return this.matcher.end(defaultValue);
   }
 }
 
 export function Unless<R>(condition: boolean, result: QuandoParam<R>) {
-  return new UnlessCondition<boolean, R>(
-    new Controller<boolean, R>(false, condition, result, compareBooleans),
-  );
+  const matcher = new Matcher<boolean, R>(compareBooleans, false);
+  matcher.updateResult(condition, result);
+  return new UnlessCondition<boolean, R>(matcher);
+}
+
+function compareMatches<M, R>(
+  comparable: M,
+  clause: QuandoMatches<M>,
+  result: QuandoParam<R>,
+) {
+  if (clause instanceof Function) {
+    if (clause(comparable)) {
+      return extractResult<R>(result);
+    }
+  } else {
+    if (comparable === clause) {
+      return extractResult<R>(result);
+    }
+  }
+  return undefined;
 }
 
 class MatchCondition<M, R> {
-  private matchable: M;
-  private result: R | undefined;
-  constructor(matchable: M) {
-    this.matchable = matchable;
-    this.result = undefined;
+  private matcher: Matcher<M, R>;
+
+  constructor(matcher: Matcher<M, R>) {
+    this.matcher = matcher;
   }
-  where(clause: M | ((arg: M) => Boolean), result: (() => R) | R | undefined) {
-    if (this.result) return this;
-    if (clause instanceof Function) {
-      if (clause(this.matchable)) {
-        this.result = extractResult<R>(result);
-      }
-    } else {
-      if (this.matchable === clause) {
-        this.result = extractResult<R>(result);
-      }
-    }
+  where(clause: QuandoMatches<M>, result: QuandoParam<R>) {
+    this.matcher.updateResult(clause, result);
     return this;
   }
-  end(defaultValue?: (() => R) | R | undefined) {
-    if (this.result) {
-      return this.result;
-    }
-    return extractResult<R>(defaultValue);
+  end(defaultValue?: QuandoParam<R>) {
+    return this.matcher.end(defaultValue);
   }
 }
 
 export function Match<M, R>(matchable: M) {
-  return new MatchCondition<M, R>(matchable);
+  return new MatchCondition<M, R>(new Matcher<M, R>(compareMatches, matchable));
 }
