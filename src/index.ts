@@ -89,14 +89,10 @@ function compareMatches<M, R>(
   clause: QuandoMatches<M>,
   result: QuandoParam<R>,
 ) {
-  if (clause instanceof Function) {
-    if (clause(comparable)) {
-      return extractResult<R>(result);
-    }
-  } else {
-    if (comparable === clause) {
-      return extractResult<R>(result);
-    }
+  if (clause instanceof Function && clause(comparable)) {
+    return extractResult<R>(result);
+  } else if (comparable === clause) {
+    return extractResult<R>(result);
   }
   return undefined;
 }
