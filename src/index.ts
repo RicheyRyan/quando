@@ -1,5 +1,10 @@
 type QuandoResult<R> = R | undefined;
 type QuandoParam<R> = (() => R) | QuandoResult<R>;
+type QuandoComparer<M, R> = (
+  comparable: M,
+  condition: M,
+  result: QuandoParam<R>,
+) => QuandoResult<R>;
 
 function extractResult<T>(result: QuandoParam<T>) {
   if (result instanceof Function) {
@@ -9,16 +14,30 @@ function extractResult<T>(result: QuandoParam<T>) {
   }
 }
 
-class Controller<R> {
-  defaultCondition: Boolean;
+function compareBooleans<R>(
+  comparable: Boolean,
+  condition: Boolean,
+  result: QuandoParam<R>,
+) {
+  if (comparable === Boolean(condition)) {
+    return extractResult<R>(result);
+  }
+  return undefined;
+}
+
+class Controller<M, R> {
+  comparable: M;
+  checkCondition: QuandoComparer<M, R>;
   result: QuandoResult<R>;
   constructor(
-    defaultCondition: Boolean,
-    condition: Boolean,
+    comparable: M,
+    condition: M,
     result: QuandoParam<R>,
+    checkCondition: QuandoComparer<M, R>,
   ) {
-    this.defaultCondition = defaultCondition;
-    this.updateResult(Boolean(condition), result);
+    this.comparable = comparable;
+    this.checkCondition = checkCondition;
+    this.updateResult(condition, result);
   }
   end(defaultValue?: QuandoParam<R>) {
     if (this.result) {
@@ -26,21 +45,19 @@ class Controller<R> {
     }
     return extractResult<R>(defaultValue);
   }
-  updateResult(condition: Boolean, result: QuandoParam<R>) {
+  updateResult(condition: M, result: QuandoParam<R>) {
     if (this.result) return;
-    if (condition === this.defaultCondition) {
-      this.result = extractResult<R>(result);
-    }
+    this.result = this.checkCondition(this.comparable, condition, result);
   }
 }
 
-class WhenCondition<R> {
-  private controller: Controller<R>;
+class WhenCondition<M, R> {
+  private controller: Controller<M, R>;
 
-  constructor(controller: Controller<R>) {
+  constructor(controller: Controller<M, R>) {
     this.controller = controller;
   }
-  elseWhen(condition: Boolean, result: QuandoParam<R>) {
+  elseWhen(condition: M, result: QuandoParam<R>) {
     this.controller.updateResult(condition, result);
     return this;
   }
@@ -49,14 +66,16 @@ class WhenCondition<R> {
   }
 }
 
-export function When<R>(condition: Boolean, result?: QuandoParam<R>) {
-  return new WhenCondition<R>(new Controller<R>(true, condition, result));
+export function When<R>(condition: boolean, result?: QuandoParam<R>) {
+  return new WhenCondition<boolean, R>(
+    new Controller<boolean, R>(true, condition, result, compareBooleans),
+  );
 }
 
-class UnlessCondition<R> {
-  private controller: Controller<R>;
+class UnlessCondition<M, R> {
+  private controller: Controller<M, R>;
 
-  constructor(controller: Controller<R>) {
+  constructor(controller: Controller<M, R>) {
     this.controller = controller;
   }
   end(defaultValue?: QuandoParam<R>) {
@@ -64,8 +83,10 @@ class UnlessCondition<R> {
   }
 }
 
-export function Unless<R>(condition: Boolean, result: QuandoParam<R>) {
-  return new UnlessCondition<R>(new Controller<R>(false, condition, result));
+export function Unless<R>(condition: boolean, result: QuandoParam<R>) {
+  return new UnlessCondition<boolean, R>(
+    new Controller<boolean, R>(false, condition, result, compareBooleans),
+  );
 }
 
 class MatchCondition<M, R> {
