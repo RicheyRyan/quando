@@ -11,7 +11,6 @@ function extractResult<T>(result: QuandoParam<T>) {
 
 class Controller<R> {
   defaultCondition: Boolean;
-  condition: Boolean;
   result: QuandoResult<R>;
   constructor(
     defaultCondition: Boolean,
@@ -19,18 +18,19 @@ class Controller<R> {
     result: QuandoParam<R>,
   ) {
     this.defaultCondition = defaultCondition;
-    this.condition = defaultCondition;
     this.updateResult(Boolean(condition), result);
   }
   end(defaultValue?: QuandoParam<R>) {
-    if (this.condition === this.defaultCondition) {
+    if (this.result) {
       return this.result;
     }
     return extractResult<R>(defaultValue);
   }
   updateResult(condition: Boolean, result: QuandoParam<R>) {
-    this.condition = condition;
-    this.result = extractResult<R>(result);
+    if (this.result) return;
+    if (condition === this.defaultCondition) {
+      this.result = extractResult<R>(result);
+    }
   }
 }
 

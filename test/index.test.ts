@@ -47,6 +47,15 @@ describe("Quando", () => {
           .end(),
       ).toBeUndefined();
     });
+
+    it("returns the earliest matching clause", () => {
+      expect(
+        When<number>(true, 1)
+          .elseWhen(true, 2)
+          .elseWhen(false, 3)
+          .end(),
+      ).toBe(1);
+    });
   });
   describe("Unless", () => {
     it("returns the result when the initial condition is false", () => {
