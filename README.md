@@ -113,3 +113,11 @@ Examples of using each function can be found in the `examples` folder. You can r
 yarn build
 node examples/examples.js
 ```
+
+Any contributions of interesting examples would be much appreciated.
+
+### Extending the library
+
+Each of the functions above are factories that create an instance of a class. There is a class for each of the functions. Each class is a facade over the `Matcher` class, they make the public fluent interface and each call passes through to the `Matcher` which handles the actual matching logic.
+
+You can import the `Matcher` class and the `extractResult` function which helps with results that are passed as functions. Using them both you can create your own factory function and inject your own matching logic into the `Matcher` class.
