@@ -18,7 +18,7 @@ yarn add quando
 
 ## Motivation
 
-JavaScript has poor support for conditional expressions, and handling scenarios with more than three clauses is impossible. It's awkward when handling conditions in JSX which encourages an expression oriented approach and doesn't provide conditional elements found in a templating language like Handlebars.
+JavaScript has poor support for conditional expressions, and handling scenarios with multiple clauses is impossible. It's awkward when handling conditions in JSX which encourages an expression oriented approach and doesn't provide conditional elements found in a templating language like Handlebars.
 
 Some proposals would bring more powerful conditional expressions to JavaScript like [do](https://github.com/tc39/proposal-do-expressions) and [pattern matching](https://github.com/tc39/proposal-pattern-matching), but they are a long way off and may never happen. In an ideal world, this library would be made redundant by these proposals making it into the language. However, Quando is for the time we spend waiting.
 
