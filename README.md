@@ -1,5 +1,7 @@
 # Quando
 
+This project is unmaintained. [ts-pattern](https://github.com/gvergnaud/ts-pattern) is a better execution of the idea.
+
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/quando?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/richeyryan/quando?style=flat-square)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/RicheyRyan/quando.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RicheyRyan/quando/context:javascript)
